@@ -1,0 +1,10 @@
+Package: agdasci
+Type: Package
+Title: Agricultural Data Science functions
+Version: 0.1
+Date: 2019-06-10
+Author: Authors
+Maintainer: <r.hijmans@gmail.com>
+Description: Functions to help donwloading data and other things
+License: GPL (>=3)
+
