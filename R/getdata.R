@@ -68,6 +68,7 @@ get_data_from_uri <- function(uri, path, uripath=TRUE, unzip=TRUE) {
 	if ((file.exists(zipf0) || file.exists(zipf1))) {
 		zipf <- list.files(path, paste0(uname, ".*zip$"), full.names=TRUE)		
 	} else {
+		zipf <- zipf1
 		dir.create(path, FALSE, TRUE)
 		if (!file.exists(path)) {
 			stop(paste("cannot create path:", path))
@@ -89,8 +90,9 @@ get_data_from_uri <- function(uri, path, uripath=TRUE, unzip=TRUE) {
 		tmpf <- tempfile()
 		download.file(uu, tmpf, quiet=TRUE)
 		js <- readLines(tmpf, encoding = "UTF-8", warn=FALSE)
-		fjs <- jsonlite::fromJSON(js)$data$latestVersion$files
-		jsp <- jsonlite::toJSON(fjs, pretty=TRUE)
+		js <- jsonlite::fromJSON(js)
+		fjs <- js$data$latestVersion$files
+		jsp <- jsonlite::toJSON(js, pretty=TRUE)
 		writeLines(jsp, file.path(path, paste0(uname, ".json")))
 		f <- if(is.null(fjs$dataFile)) {fjs$datafile} else {fjs$dataFile}
 		f$checksum <- NULL
@@ -149,8 +151,11 @@ get_data_from_uri <- function(uri, path, uripath=TRUE, unzip=TRUE) {
 		}
 	}
 	zf <- grep("\\.pdf$", allzf, value=TRUE, invert=TRUE)
-	return(file.path(path, zf))
+	zf <- file.path(path, zf)
+	try(make_recipe(uri, zf, file.path(path, paste0(uname, ".yaml"))))
+	return(zf)
 }
+
 
 
 #uri <- "https://doi.org/10.7910/DVN/YDQDJH"
